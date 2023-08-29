@@ -7,7 +7,7 @@ export const isArray = (what) => {
 };
 
 export const returnSystemErrorMsg = () => {
-  return "Sorry system error, your request can not be processed please try again later thank you";
+  return "Sorry system error, your request can not be processed please see a member of the security team thank you!";
 };
 
 export const replaceChar = (str, whatTosearch, replaceWith) => {
@@ -140,3 +140,13 @@ export function moveCursorToTextEnd(input, inputValue) {
   let textEnd = inputValue.length;
   setTimeout(() => input.setSelectionRange(textEnd, textEnd));
 }
+
+export function validMobileNumber(number) {
+  let regex = /^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}$/,
+    result = regex.test(number);
+  return result;
+}
+
+export function returnCoWorkerFullName(fname, lname) {
+  return fname + " " + lname;
+};

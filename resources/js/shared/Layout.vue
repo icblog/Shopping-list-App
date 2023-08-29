@@ -4,7 +4,7 @@
       {{ appName + " | " + pageTitle }}
     </title>
   </Head>
-  <Header />
+  <Header :backUrl="backUrl" />
   <div class="content-wrapper">
     <slot />
   </div>
@@ -12,7 +12,7 @@
 </template>
 <script>
 //appDataObj.appName variable comes from views/app.blade.php
-const appName = appDataObj.appName;
+const appName = "iv";
 </script>
 <script setup>
 import Header from "./Header";
@@ -21,6 +21,11 @@ import { Head } from "@inertiajs/vue3";
 
 defineProps({
   pageTitle: {
+    type: String,
+    default: "",
+  },
+
+  backUrl: {
     type: String,
     default: "",
   },

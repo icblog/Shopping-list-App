@@ -63,7 +63,7 @@
 
 .primary-btn {
 	padding: 0.5rem 0.8rem;
-	background-color: $primaryColor;
+	background-color: $blackColor;
 	color: $whiteColor;
 	font-size: 1rem;
 	font-weight: 500;
@@ -71,8 +71,8 @@
 	text-decoration: none;
 
 	&:hover {
-		background-color: $primaryColorDark;
-		color: $lightGreyColor;
+		background-color: $darkGreyColor;
+		color: $whiteColor;
 		text-decoration: none;
 	}
 
@@ -136,11 +136,6 @@
 	flex-direction: column;
 }
 
-.fancy-input {
-	border-top: 0;
-	border-left: 0;
-	border-right: 0;
-}
 
 
 @media (max-width: 991.98px) {

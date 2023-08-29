@@ -7,21 +7,24 @@
         integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-      <!-- APP CSS -->
-    @if(App::environment(['local', 'staging']))
-    <link rel="stylesheet" href="{{ asset('css/app.css?v='.rand(1,99)) }}">
-    @else
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    @endif
+      
+       <!-- APP JS AND CSS -->
+       <!-- APP JS AND CSS -->
+      
+       @if(App::environment(['local', 'staging']))
+        <link rel="stylesheet" href="{{ asset('css/app.css?v='.rand(1,99)) }}">
+       @else
+       <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+   
+       @endif
 
-    
-    <script src="{{ asset('js/manifest.js') }}" defer></script>
-    <script src="{{ asset('js/vendor.js') }}" defer></script>
-
-    @if(App::environment(['local', 'staging']))
-    <script src="{{ asset('js/app.js?v='.rand(1,99)) }}" defer></script>
+      <script src="{{ asset('js/manifest.js') }}" defer></script>
+      <script src="{{ asset('js/vendor.js') }}" defer></script>
+      
+     @if(App::environment(['local', 'staging']))
+      <script src="{{ asset('js/app.js?v='.rand(1,99)) }}" defer></script>
     @else
-    <script src="{{ asset('js/app.js') }}" defer></script>
+     <script src="{{ asset('js/app.js') }}" defer></script>
     @endif
     
      @inertiaHead
@@ -34,7 +37,7 @@
   </body>
     <script>
        let appDataObj = {
-        'resumeLink': '{{env('CV_DOWNLOAD_LINK')}}',
+       
         'appName': '{{env('APP_NAME')}}',
         'appEnv': '{{env('APP_ENV')}}',
        }

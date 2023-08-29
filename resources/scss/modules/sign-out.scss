@@ -1,0 +1,25 @@
+.find-visitor-signin-result-div {
+    background-color: $whiteColor;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+}
+
+.find-visitor-signin-result-div .row .col {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.1rem solid $lightGreyColor;
+}
+
+.find-visitor-signin-result-div .row .col p {
+    padding-top: 0.7rem;
+    color: $blackColor;
+    font-size: 1rem;
+    font-weight: 600;
+
+}
+
+@media (max-width: 991.98px) {}
+
+@media (max-width: 767.98px) {}
+
+@media (max-width: 575.98px) {}
