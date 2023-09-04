@@ -57,5 +57,8 @@ onMounted(() => {
   setTimeout(() => {
     currentDateTime();
   }, 50);
+  setInterval(() => {
+    currentDateTime();
+  }, 1000);
 });
 </script>
