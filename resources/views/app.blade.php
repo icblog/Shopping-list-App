@@ -6,9 +6,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
         integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-      
-       <!-- APP JS AND CSS -->
+        
+        <link rel="shortcut icon" sizes="16x16 32x32" href="{{ asset('imgs/favicons/favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ asset('imgs/favicons/apple-touch-icon.png') }}">
+        <link rel="icon" sizes="16x16" href="{{ asset('imgs/favicons/favicon-16x16.png') }}">
+        <link rel="icon" sizes="32x32" href="{{ asset('imgs/favicons/favicon-32x32.png') }}">
+        <link rel="icon" sizes="512x512" href="{{ asset('imgs/favicons/android-chrome-512x512.png') }}">
+        <link rel="icon" sizes="512x512" href="{{ asset('imgs/favicons/android-chrome-192x192.png') }}">
        <!-- APP JS AND CSS -->
       
        @if(App::environment(['local', 'staging']))

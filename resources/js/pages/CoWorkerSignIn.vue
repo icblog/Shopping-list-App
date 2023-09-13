@@ -38,7 +38,7 @@
                 />
               </div>
               <h5 class="text-center mb-3">ZXY co-workers only</h5>
-              <p class="text-center small mb-5">
+              <p class="text-center small mb-3">
                 Please note, all fields marked with a * are required
               </p>
 

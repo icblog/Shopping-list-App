@@ -33,12 +33,21 @@
             <div class="row">
               <div class="col-md-10 mx-auto">
                 <div class="form-wrapper">
+                  <h5 class="text-center mb-3">Sign out</h5>
+                  <p class="text-center small mb-3">
+                    Please note, all fields marked with a * are required
+                  </p>
                   <div class="form-group">
                     <div class="row">
                       <div class="col">
                         <label class="form-label" for="signoutoption"
-                          >{{ signOutData.label }}*</label
-                        >
+                          >{{ signOutData.label }}*
+                          <img
+                            v-show="signOutData.label == 'Enter badge letter'"
+                            class="badge-img"
+                            src="/imgs/badge.jpg"
+                            alt="badge"
+                        /></label>
                       </div>
                       <div class="col pb-2">
                         <AppButton
@@ -125,11 +134,7 @@ import { reactive, ref, onMounted, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { debounce } from "lodash";
 import axios from "../api/axios";
-import {
-  focusOnFirstInput,
-  scrollToTopOfPage,
-  returnSystemErrorMsg,
-} from "../helper/util";
+import { focusOnFirstInput, returnSystemErrorMsg, toSqlDatetime} from "../helper/util";
 import Layout from "../shared/Layout";
 import AppButton from "../shared/AppButton";
 import LoadingIndicator from "../shared/LoadingIndicator.vue";
@@ -151,6 +156,7 @@ const signOutData = reactive({
   },
   actionData: {
     action: "alreadysignedIn",
+    currentDataTime: toSqlDatetime(new Date()),
   },
   label: "Enter badge letter",
   isSearchComplete: false,

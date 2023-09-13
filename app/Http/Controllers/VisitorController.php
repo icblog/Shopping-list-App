@@ -118,6 +118,7 @@ public function store(Request $request){
 
     //Check if use visitor has sign in and not sign out.
        $visitorResult = Visitor::checkOutVisitor($request);
+       
         //Check for query error
       if($visitorResult['error']){
         $request->session()->put('respondsMsg', 'code100');
@@ -241,7 +242,7 @@ public function searchCoworker(Request $request){
     try{
           //if there is an id update database;
         $updatedResult = Visitor::where('id',$signedInId)
-        ->update(['sign_out' => $this->returnTimeStamp()]);
+        ->update(['sign_out' => $request->currentDataTime]);
 
           $request->session()->put('respondsMsg', "code200");
           return redirect()
