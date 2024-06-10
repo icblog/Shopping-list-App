@@ -4,24 +4,31 @@
       <div class="row">
         <div class="col-md-10 mx-auto">
           <div class="row">
-            <div class="col text-right">
+            <div class="col">
               <AppButton
                 :btnFunc="() => initiateSignInOption()"
-                btnStyle="primary"
+                btnStyle="success"
                 customClass="sign-in-out-btn"
               >
-                <i class="fas fa-arrow-up"></i><br />
-                Sign In
+                Sign In <i class="fas fa-arrow-down"></i>
               </AppButton>
             </div>
             <div class="col">
               <AppButton
                 :btnFunc="() => initiateSignOut()"
-                btnStyle="primary"
+                btnStyle="danger"
                 customClass="sign-in-out-btn ml-4"
               >
-                <i class="fas fa-arrow-down"></i><br />
-                Sign Out
+                Sign Out <i class="fas fa-arrow-up"></i>
+              </AppButton>
+            </div>
+            <div class="col">
+              <AppButton
+                :btnFunc="() => initiateTempInOut()"
+                btnStyle="warn"
+                customClass="sign-in-out-btn ml-4"
+              >
+                Temp Off Site
               </AppButton>
             </div>
           </div>
@@ -41,5 +48,8 @@ const initiateSignInOption = () => {
 };
 const initiateSignOut = () => {
   router.visit("/signout");
+};
+const initiateTempInOut = () => {
+  router.visit("/temp-in-out");
 };
 </script>

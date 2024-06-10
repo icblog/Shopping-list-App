@@ -7,31 +7,21 @@
             <div class="col text-right">
               <AppButton
                 :btnFunc="() => initiateCoWokerSignIn()"
-                btnStyle="primary"
-                customClass="sign-in-out-btn"
+                btnStyle="success"
+                customClass="sign-in-out-btn mr-4"
               >
-                I'm XYZ co-worker
+                I'm co-worker
               </AppButton>
             </div>
             <div class="col">
               <AppButton
                 :btnFunc="() => initiateExtVisitorSiginIn()"
-                btnStyle="primary"
+                btnStyle="primary2"
                 customClass="sign-in-out-btn ml-4"
               >
-                External visitor
+                I'm visitor
               </AppButton>
             </div>
-
-            <!-- <div class="col text-center">
-              <AppButton
-                :btnFunc="() => initiateSupportOffice()"
-                btnStyle="primary"
-                customClass="sign-in-out-btn"
-              >
-                Service Office
-              </AppButton>
-            </div> -->
           </div>
         </div>
       </div>

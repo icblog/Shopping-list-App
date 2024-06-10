@@ -270,7 +270,7 @@
                             :key="companyIndex"
                           >
                             <span
-                              v-if="company.quick_company == 'yes'"
+                              v-if="company.is_quick == 1"
                               :class="{
                                 'quick-btn': true,
                                 'quick-btn-disabled':
@@ -390,7 +390,7 @@ import {
   returnCoWorkerFullName,
 } from "../helper/util";
 import AppButton from "../shared/AppButton";
-import OptionElement from "../shared/OptionElement.vue";
+import OptionElement from "../shared/OptionElement";
 import coWorkerSearch from "../shared/coWorkerSearch";
 import AppLink from "../shared/AppLink.vue";
 

@@ -1,6 +1,6 @@
 <template>
   <div class="logo-wrapper">
-    <h1 class="iv-logo"><AppLink linkUrl="/">XYZ LTD</AppLink></h1>
+    <h1 class="iv-logo"><AppLink linkUrl="/">Ic visitor</AppLink></h1>
   </div>
 </template>
 

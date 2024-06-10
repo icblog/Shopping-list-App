@@ -9744,7 +9744,7 @@ body {
   text-decoration: none;
 }
 .primary-btn:hover {
-  background-color: #252525;
+  background-color: #101010;
   color: #ffffff;
   text-decoration: none;
 }
@@ -9827,7 +9827,7 @@ body {
   }
 }
 .header-wrapper {
-  padding-bottom: 6rem;
+  padding-bottom: 2.8rem;
   padding-top: 1.8rem;
 }
 
@@ -9955,7 +9955,7 @@ body {
   cursor: pointer;
 }
 .form-wrapper .selected-visitor-p .change-visitor-btn:hover {
-  background-color: #252525;
+  background-color: #101010;
 }
 
 .form-wrapper .err-div {
@@ -10028,7 +10028,7 @@ body {
   color: #ffffff;
 }
 .option-toggle-btn:hover {
-  background-color: #252525;
+  background-color: #101010;
   color: #ffffff;
 }
 
@@ -10157,10 +10157,10 @@ footer {
   padding: 3.5rem 2rem;
   font-weight: bold;
   font-size: larger;
-  background-color: #004F93;
+  color: #101010;
 }
 .sign-in-out-btn:hover {
-  background-color: #3466F6;
+  color: #101010;
 }
 
 @media (max-width: 991.98px) {

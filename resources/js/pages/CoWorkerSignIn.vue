@@ -37,7 +37,7 @@
                   customClass="form-responds-msg"
                 />
               </div>
-              <h5 class="text-center mb-3">ZXY co-workers only</h5>
+              <h5 class="text-center mb-3">IC co-workers only</h5>
               <p class="text-center small mb-3">
                 Please note, all fields marked with a * are required
               </p>
@@ -302,10 +302,7 @@ let processing = ref(false),
 const props = defineProps({
   errors: Object,
   respondsMsg: String,
-  companyResult: {
-    type: Object,
-    default: [],
-  },
+
   reasonResult: {
     type: Object,
     default: [],
