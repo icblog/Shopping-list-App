@@ -1,61 +1,113 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Traits\HelperTrait;
-use App\Traits\TokenTrait;
-use App\Models\User;
-use App\Lib\Cloudinary;
-
-class BaseController extends Controller{
-   
-    use HelperTrait;
-    use TokenTrait;
-     //METHODS USED FROM HelperTrait
-     //sendAlinkToUser
-    
-   public $linkExpireTime = 2400;//(40mins)
-
-public function cloudinaryInstance(){
-      $cloudinary = new Cloudinary();
-      return  $cloudinary;
-}//End cloudinaryInstance
 
 
- public function sendPasswordWordResetLink($token, $email){
 
-     try {
-            
-       User::where('email', $email)->update(['token_status' => 'no','what_was_change' => 'Token status']);
-       $action = "secure2";
-       $subject ="About your account";
-       $emailTemplate = "mail.reg-email-exist";
-       return $this->sendAlinkToUser($token, $email, $action, $subject, $emailTemplate);
-       
-    } catch (\Exception $e) {
-     
-         return ["error" => true];
-     
+class BaseController extends Controller
+{
+
+  public function replaceFirstOccuranceOfChar($search, $replace, $subject)
+  {
+
+    $pos = strpos($subject, $search);
+    if ($pos !== false) {
+      return substr_replace($subject, $replace, $pos, strlen($search));
     }
-  }//End sendPasswordWordResetLink
-  
-public function setNotificationSessionData(
-           $redirectLink,
-           $type,
-           $msg,
-           $redirectTime,
-           $request
-           ){
-          $request->session()->put('redirectLink', $redirectLink);
-          $request->session()->put('type', $type);
-          $request->session()->put('msg', $msg);
-          $request->session()->put('redirectTime', $redirectTime);
+    return $subject;
+  }
 
-}//End setNotificationSessionData
+  public function returnGenericSystemErrMsg()
+  {
+    return "Sorry system error, your request can not be processed please contact a team leader or a manager thank you";
+  } //End returnGenericSystemErrMsg
 
-public function returnCloudinaryDefaultLink(){
-  return "https://res.cloudinary.com/icblog254/image/upload/v1662665884/icblog/siteimgs/vqkopmclbqxlbtfk9b59.png";
-}
+  public function checkIsEmail($email)
+  {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
-    
+  public function returnReplacedStr($str, $findWhat, $replaceWith)
+  {
+    $str = trim($str);
+    $str1 = strtolower(str_replace($findWhat, $replaceWith, $str));
+    return $str1;
+  }
 
+  public function cleanData($data)
+  {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  } // end CleanData
+
+  public function randomNumber($length = 6)
+  {
+    $chars = "0123456789";
+    $string = substr(str_shuffle($chars), 0, $length);
+    return $string;
+  }
+
+  public function randomString($length = 6)
+  {
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    $string = substr(str_shuffle($chars), 0, $length);
+    return $string;
+  }
+
+  public function encodeUserData($userData)
+  {
+    $salt = env('APP_KEY', '');
+    $encryptedUserData = base64_encode($userData . $salt);
+    return $encryptedUserData;
+  } // function encodeUserData
+
+  public function decodeUserData($encryptedUserData)
+  {
+    $salt = env('APP_KEY', '');
+    $decryptedUserDataRaw = base64_decode($encryptedUserData);
+    $decryptedUserData = preg_replace(sprintf('/%s/', $salt), '', $decryptedUserDataRaw);
+    return  $decryptedUserData;
+  } // function decodeUsertData
+
+  public function returnTimeStamp()
+  {
+    return date("Y-m-d H:i:s");
+  }
+
+  public function checkExactMatchOfString($str, $needle)
+  {
+    if (preg_match("~\b$needle\b~", $str)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public function datetimeToText($datetime = "")
+  {
+    $unixdatetime = strtotime($datetime);
+    return strftime("%B %d, %Y at %I:%M %p", $unixdatetime);
+  }
+
+  public function returnDate($datetime = "")
+  {
+
+    if ($datetime == '') {
+      return date("D, d M Y", strtotime($this->returnTimeStamp()));
+    } else {
+      return date("D, d M Y", strtotime($datetime));
+    }
+  }
+  public function validatePhone($phoneNumber)
+  {
+    $res = preg_match('/^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}$/', $phoneNumber);
+    // dd($res);
+    return $res;
+  }
 }//End class

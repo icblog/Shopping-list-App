@@ -4,10 +4,14 @@
       ref="searchInput"
       v-model="searchedWord"
       type="text"
-      class="form-control"
+      :class="{
+        'form-control': true,
+        'input-error': input_error != '' ? true : false,
+      }"
       :placeholder="placeholderText"
       maxlength="255"
       autocomplete="off"
+      @focus="inputFocusFunc"
       @keypress.enter.prevent
     />
     <div class="co-worker-search-result" v-show="searchedWord != ''">
@@ -34,12 +38,6 @@
           <p class="result-entry-p" @click="() => handleResultClicked(coWorker)">
             {{ returnCoWorkerFullName(coWorker.fname, coWorker.lname) }}
           </p>
-
-          <!-- <p class="result-entry-p">
-                  <AppLink :linkUrl="`/blog/category/${categoryEntry.slug}`">
-                    {{ limitString(60, coWorker.fname) + " " + limitString(60, coWorker.lname) }}
-                  </AppLink>
-                </p>-->
         </div>
       </section>
 
@@ -79,6 +77,10 @@ let searchedWord = ref(""),
 const emit = defineEmits(["updateSelected"]);
 
 const props = defineProps({
+  inputFocusFunc: {
+    type: Function,
+    default: null,
+  },
   focusOnSearchInput: {
     type: Boolean,
     default: false,
@@ -90,6 +92,10 @@ const props = defineProps({
   makeResultAlink: {
     type: Boolean,
     default: true,
+  },
+  input_error: {
+    type: Boolean,
+    default: false,
   },
   resultFoundTextSingular: {
     type: String,
@@ -106,6 +112,11 @@ const props = defineProps({
   placeholderText: {
     type: String,
     default: "Search ....",
+  },
+
+  user_type: {
+    type: String,
+    default: "all",
   },
 
   noResultText: {
@@ -140,6 +151,7 @@ const handleSearchForm = async (searchedWordValue) => {
     try {
       const res = await axios.post("/search-coworker", {
         searchedword: searchedWordValue,
+        user_type: props.user_type,
       });
 
       if (res?.data?.error != "") {

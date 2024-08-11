@@ -4,22 +4,14 @@
       <div class="row">
         <div class="col-md-10 mx-auto">
           <div class="row">
-            <div class="col">
+            <div class="col text-right">
               <AppButton
-                :btnFunc="() => initiateSignInOption()"
-                btnStyle="success"
-                customClass="sign-in-out-btn"
+                :btnFunc="() => initiateSignInOutOption()"
+                btnStyle="primary2"
+                customClass="sign-in-out-btn mr-4"
               >
-                Sign In <i class="fas fa-arrow-down"></i>
-              </AppButton>
-            </div>
-            <div class="col">
-              <AppButton
-                :btnFunc="() => initiateSignOut()"
-                btnStyle="danger"
-                customClass="sign-in-out-btn ml-4"
-              >
-                Sign Out <i class="fas fa-arrow-up"></i>
+                I'm Signing<br />
+                in/out
               </AppButton>
             </div>
             <div class="col">
@@ -28,7 +20,8 @@
                 btnStyle="warn"
                 customClass="sign-in-out-btn ml-4"
               >
-                Temp Off Site
+                Temporarily<br />
+                Off Site
               </AppButton>
             </div>
           </div>
@@ -43,12 +36,10 @@ import { router } from "@inertiajs/vue3";
 import AppButton from "../shared/AppButton";
 import Layout from "../shared/Layout";
 
-const initiateSignInOption = () => {
-  router.visit("/sign-in-option");
+const initiateSignInOutOption = () => {
+  router.visit("/sign-in-out-option");
 };
-const initiateSignOut = () => {
-  router.visit("/signout");
-};
+
 const initiateTempInOut = () => {
   router.visit("/temp-in-out");
 };

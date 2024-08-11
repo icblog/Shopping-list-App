@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-md-12 header-wrapper">
+      <div class="col-md-12 header-wrapper mb-5">
         <div class="text-center">
           <Logo />
           <hr />
@@ -24,7 +24,6 @@
             </AppLink>
           </div>
         </div>
-        <hr />
       </div>
     </div>
   </div>

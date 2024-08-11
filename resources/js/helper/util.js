@@ -150,3 +150,19 @@ export function validMobileNumber(number) {
 export function returnCoWorkerFullName(fname, lname) {
   return fname + " " + lname;
 };
+
+export function returnCurrentDate(to_string = true) {
+  const current_date = new Date();
+  if (to_string) {
+    return current_date.toDateString();
+  } else {
+    return current_date;
+  }
+
+
+}
+
+export function returnCurrentTime() {
+  const current_date = returnCurrentDate(false);
+  return current_date.toLocaleTimeString("en-GB").slice(0, 5);
+}

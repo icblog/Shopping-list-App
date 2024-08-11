@@ -44,29 +44,84 @@
 
               <form @submit.prevent="handleIvSigninForm">
                 <div class="row">
-                  <div class="col-md-9 mx-auto">
-                    <section v-if="coworkerSignInData.selected_coworker == ''">
-                      <label class="form-label" for="lname">Last name *</label>
+                  <div class="col-md-10 mx-auto">
+                    <section
+                      class="pb-5"
+                      v-if="coworkerSignInData.selected_coworker == ''"
+                    >
+                      <label class="form-label">Your first or last name *</label>
                       <coWorkerSearch
                         :makeResultAlink="false"
                         :focusOnSearchInput="true"
                         resultFoundTextSingular="person"
                         resultFoundTextplural="people"
+                        user_type="coworker"
                         placeholderText="Let's find you..."
-                        noResultText="Sorry we could'nt find you, this sign page is for only ZYX co-workers only"
-                        @updateSelected="updateUserSelected"
+                        noResultText="Sorry we could'nt find you, this sign page is for only IC co-workers only"
+                        @updateSelected="updateSelectedCoworker"
                       />
                     </section>
                     <section v-else>
-                      <p class="bolded">Your name</p>
-                      <p class="selected-visitor-p">
-                        <span class="pr-3">{{
-                          coworkerSignInData.selected_coworker
-                        }}</span>
-                        <span class="change-visitor-btn" @click="changeCoworker">
-                          Change
+                      <p class="bolded">
+                        Your name:
+                        <span class="selected-visitor-p ml-1">
+                          <span class="pr-3">{{
+                            coworkerSignInData.selected_coworker
+                          }}</span>
+                          <span class="change-visitor-btn" @click="changeCoworker">
+                            Change
+                          </span>
                         </span>
                       </p>
+
+                      <div class="form-group">
+                        <label class="form-label" for="visiting">
+                          {{
+                            coworkerSignInData.signInForm.visiting == ""
+                              ? "Host *"
+                              : "Your host:"
+                          }}
+                        </label>
+                        <span
+                          v-show="coworkerSignInData.signInForm.visiting == ''"
+                          class="optional"
+                        >
+                          (Who are you here to see?)</span
+                        >
+                        <div
+                          class="text-danger small"
+                          v-if="coworkerSignInData.signInFormError.host_err != ''"
+                        >
+                          {{ coworkerSignInData.signInFormError.host_err }}
+                        </div>
+                        <span
+                          class="selected-visitor-p"
+                          v-if="coworkerSignInData.signInForm.visiting != ''"
+                        >
+                          <span class="ml-2 pr-3">
+                            {{ coworkerSignInData.signInForm.visiting }}</span
+                          >
+                          <span class="change-visitor-btn" @click="changeHost">
+                            Change
+                          </span>
+                        </span>
+                        <div v-else>
+                          <coWorkerSearch
+                            :makeResultAlink="false"
+                            resultFoundTextSingular="person"
+                            resultFoundTextplural="people"
+                            user_type="coworker"
+                            :input_error="
+                              coworkerSignInData.signInFormError.host_err != ''
+                                ? true
+                                : false
+                            "
+                            noResultText="Sorry no one found, try again or you can leave this field empty thank you."
+                            @updateSelected="updateSelectedHost"
+                            :inputFocusFunc="() => removeFormInputError('host')"
+                          />
+                        </div>
+                      </div>
 
                       <div class="form-group">
                         <label class="form-label" for="reason">Reason *</label>
@@ -140,68 +195,20 @@
                           </div>
                         </div>
                       </div>
-
+                      <label class="form-label" for="badge">Badge id* </label>
                       <div
-                        v-show="
-                          coworkerSignInData.signInForm.reason != '' &&
-                          coworkerSignInData.signInForm.reason == 'Meeting'
-                        "
-                        class="form-group"
+                        class="text-danger small"
+                        v-if="coworkerSignInData.signInFormError.badge_err != ''"
                       >
-                        <label class="form-label" for="visiting">
-                          {{
-                            coworkerSignInData.signInForm.visiting == ""
-                              ? "Visiting"
-                              : "You are visiting"
-                          }}
-                        </label>
-                        <span
-                          v-show="coworkerSignInData.signInForm.visiting == ''"
-                          class="optional"
-                        >
-                          (Optional)</span
-                        >
-                        <p
-                          class="selected-visitor-p"
-                          v-if="coworkerSignInData.signInForm.visiting != ''"
-                        >
-                          <span class="pr-3">
-                            {{ coworkerSignInData.signInForm.visiting }}</span
-                          >
-                          <span class="change-visitor-btn" @click="changeVisitor">
-                            Change
-                          </span>
-                        </p>
-                        <div v-else>
-                          <coWorkerSearch
-                            :makeResultAlink="false"
-                            resultFoundTextSingular="person"
-                            resultFoundTextplural="people"
-                            noResultText="Sorry no one found, try again or you can leave this field empty thank you."
-                            @updateSelected="updateVisitorSelected"
-                          />
-                        </div>
+                        {{ coworkerSignInData.signInFormError.badge_err }}
                       </div>
 
-                      <div class="form-group">
-                        <label class="form-label" for="badge">Badge * </label>
-
-                        <div class="badge-img-wrapper">
-                          <img class="badge-img" src="/imgs/badge.jpg" alt="badge" />
-                        </div>
-
-                        <div
-                          class="text-danger small"
-                          v-if="coworkerSignInData.signInFormError.badge_err != ''"
-                        >
-                          {{ coworkerSignInData.signInFormError.badge_err }}
-                        </div>
-
+                      <div class="input-group">
                         <input
                           v-model="coworkerSignInData.signInForm.badge"
                           type="text"
                           :class="{
-                            'form-control': true,
+                            'form-control ext-badgeid-input': true,
                             'input-error':
                               coworkerSignInData.signInFormError.badge_err != ''
                                 ? true
@@ -209,13 +216,26 @@
                           }"
                           id="badge"
                           name="badge"
-                          maxlength="255"
+                          maxlength="8"
                           autocomplete="off"
                           @keypress.enter.prevent
                           @focus="() => removeFormInputError('badge')"
                         />
+                        <div class="input-group-append">
+                          <img
+                            :class="{
+                              'badge-img ext-badge-img': true,
+                              'input-error':
+                                coworkerSignInData.signInFormError.badge_err != ''
+                                  ? true
+                                  : false,
+                            }"
+                            src="/imgs/badge.jpg"
+                            alt="badge"
+                          />
+                        </div>
+                        <!-- end div input-group -->
                       </div>
-
                       <input
                         v-model="coworkerSignInData.signInForm.myhouse"
                         type="text"
@@ -225,41 +245,18 @@
                         @keypress.enter.prevent
                       />
 
-                      <div class="text-center col-md-12">
-                        <div
-                          class="text-danger small"
-                          v-if="coworkerSignInData.signInFormError.code1000_err != ''"
+                      <!-- <div class="text-center col-md-12 pt-4">
+                        <AppCheckBox
+                          :default_checked="coworkerSignInData.signInForm.code1000"
+                          :checkbox_error="
+                            coworkerSignInData.signInFormError.code1000_err
+                          "
+                          @updateCheckBox="updateCheckBox"
                         >
-                          {{ coworkerSignInData.signInFormError.code1000_err }}
-                        </div>
-
-                        <label for="code1000" class="check-box-container">
-                          <span class="induction-text induction-text-coworker"
-                            >I have received <strong>site induction</strong>, read and
-                            understood <strong>code 1000</strong> evacuation process
-                            *</span
-                          >
-                          <input
-                            v-model="code1000CheckBox"
-                            type="checkbox"
-                            id="code1000"
-                            name="code1000"
-                            @keypress.enter.prevent
-                          />
-
-                          <span
-                            :class="{
-                              checkmarkcoworkerform: true,
-                              checkmark: true,
-                              'input-error':
-                                coworkerSignInData.signInFormError.code1000_err != ''
-                                  ? true
-                                  : false,
-                            }"
-                          ></span>
-                        </label>
-                      </div>
-
+                          I have received <strong>site induction</strong>, read and
+                          understood <strong>code 5K</strong> evacuation process*
+                        </AppCheckBox>
+                      </div> -->
                       <div class="pt-3 text-center">
                         <AppButton
                           btnType="submit"
@@ -281,7 +278,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 import Layout from "../shared/Layout";
 import HandleMsg from "../shared/HandleMsg";
@@ -290,14 +287,17 @@ import {
   scrollToTopOfPage,
   returnSystemErrorMsg,
   returnCoWorkerFullName,
+  returnCurrentTime,
+  returnCurrentDate,
 } from "../helper/util";
 import AppButton from "../shared/AppButton";
 import OptionElement from "../shared/OptionElement.vue";
 import coWorkerSearch from "../shared/coWorkerSearch";
 import AppLink from "../shared/AppLink.vue";
+import AppCheckBox from "../shared/AppCheckBox";
+import axios from "../api/axios";
 
-let processing = ref(false),
-  code1000CheckBox = ref(false);
+let processing = ref(false);
 
 const props = defineProps({
   errors: Object,
@@ -315,23 +315,37 @@ const coworkerSignInData = reactive({
     last_name: "",
     phone: "",
     badge: "",
-    company: "XZY",
-    reason: "",
+    company: "IC",
+    reason: "Work",
     visiting: "",
-    code1000: code1000CheckBox,
+    code1000: true,
     myhouse: "",
     action: "co-worker",
+    host_details_arr: [],
+    date_now: returnCurrentDate(),
+    time_now: returnCurrentTime(),
   },
   signInFormError: {
     badge_err: "",
     reason_err: "",
     code1000_err: "",
+    host_err: "",
   },
   selected_coworker: "",
   isReasonOptionDivOpened: false,
   isCompanyOptionDivOpened: false,
 });
-const updateUserSelected = (selectedCoworker) => {
+
+const updateCheckBox = (check_box_value) => {
+  if (check_box_value) {
+    if (coworkerSignInData.signInFormError.code1000_err != "") {
+      coworkerSignInData.signInFormError.code1000_err = "";
+    }
+  }
+  coworkerSignInData.signInForm.code1000 = check_box_value;
+};
+
+const updateSelectedCoworker = (selectedCoworker) => {
   coworkerSignInData.selected_coworker = returnCoWorkerFullName(
     selectedCoworker.fname,
     selectedCoworker.lname
@@ -340,8 +354,11 @@ const updateUserSelected = (selectedCoworker) => {
   coworkerSignInData.signInForm.first_name = selectedCoworker.fname;
   coworkerSignInData.signInForm.last_name = selectedCoworker.lname;
   coworkerSignInData.signInForm.phone = selectedCoworker.phone;
+
+  fetchLeaders(selectedCoworker.depart_or_comp_id);
 };
-const updateVisitorSelected = (selectedCoworker) => {
+
+const updateSelectedHost = (selectedCoworker) => {
   coworkerSignInData.signInForm.visiting = returnCoWorkerFullName(
     selectedCoworker.fname,
     selectedCoworker.lname
@@ -350,10 +367,13 @@ const updateVisitorSelected = (selectedCoworker) => {
 
 const changeCoworker = () => {
   coworkerSignInData.selected_coworker = "";
+  coworkerSignInData.signInForm.host_details_arr = [];
+  coworkerSignInData.signInForm.reason = "Work";
 };
 
-const changeVisitor = () => {
+const changeHost = () => {
   coworkerSignInData.signInForm.visiting = "";
+  coworkerSignInData.signInForm.host_details_arr = [];
 };
 
 const toggleOptionWrapperDiv = (inputName) => {
@@ -371,6 +391,10 @@ const hideOptionSelectDiv = () => {
 
 const removeFormInputError = (inputName) => {
   switch (inputName) {
+    case "host":
+      coworkerSignInData.signInFormError.host_err = "";
+      break;
+
     case "badge":
       coworkerSignInData.signInFormError.badge_err = "";
       break;
@@ -391,6 +415,9 @@ const handleQuickReason = (reasonText) => {
 };
 
 const assignServerErrors = (errObj) => {
+  if (errObj.host !== undefined) {
+    coworkerSignInData.signInFormError.host_err = errObj.host;
+  }
   if (errObj.badge !== undefined) {
     coworkerSignInData.signInFormError.badge_err = errObj.badge;
   }
@@ -407,10 +434,15 @@ const assignServerErrors = (errObj) => {
 const handleIvSigninForm = () => {
   //Validate the form
   let abort = false;
+  if (coworkerSignInData.signInForm.visiting == "") {
+    abort = true;
+    coworkerSignInData.signInFormError.host_err =
+      "Search and select your host please thank you";
+  }
 
   if (coworkerSignInData.signInForm.badge == "") {
     abort = true;
-    coworkerSignInData.signInFormError.badge_err = "Enter Badge letter or name";
+    coworkerSignInData.signInFormError.badge_err = "Enter Badge id";
   }
 
   if (coworkerSignInData.signInForm.reason == "") {
@@ -418,11 +450,12 @@ const handleIvSigninForm = () => {
     coworkerSignInData.signInFormError.reason_err = "Reason is required";
   }
 
-  if (!code1000CheckBox.value) {
+  if (coworkerSignInData.signInForm.code1000 == "") {
     abort = true;
     coworkerSignInData.signInFormError.code1000_err =
-      "Tick this box to confirm you've recieved site induction and understand code 1000";
+      "Tick this box to confirm you've recieved site induction and understand code 5K";
   }
+
   //Submit form if no validation errors
 
   if (!abort) {
@@ -450,10 +483,27 @@ const handleIvSigninForm = () => {
   } // end if abort
 };
 
-watch(code1000CheckBox, (newCode1000Value) => {
-  if (newCode1000Value) {
-    coworkerSignInData.signInFormError.code1000_err = "";
+const fetchLeaders = async (depart_comp_id) => {
+  try {
+    const res = await axios.post("/fetch-leaders", {
+      depart_comp_id: depart_comp_id,
+    });
+
+    if (res?.data?.error != "") {
+      //console.log(res.data.error);
+    } else {
+      //console.log(res?.data?.leaders_result);
+      if (res?.data?.leaders_result.length > 0) {
+        coworkerSignInData.signInForm.visiting = returnCoWorkerFullName(
+          res?.data?.leaders_result[0].fname,
+          res?.data?.leaders_result[0].lname
+        );
+        coworkerSignInData.signInForm.host_details_arr = res?.data?.leaders_result;
+      }
+    }
+  } catch (err) {
+    //returnSystemErrorMsg();
+    //console.log(err);
   }
-  coworkerSignInData.signInForm.code1000 = newCode1000Value;
-});
+};
 </script>

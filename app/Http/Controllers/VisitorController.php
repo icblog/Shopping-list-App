@@ -9,6 +9,8 @@ use App\Models\DepartmentAndCompany;
 use App\Models\Reason;
 use App\Models\Visitor;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AppMail;
 
 
 class VisitorController extends BaseController
@@ -96,11 +98,11 @@ class VisitorController extends BaseController
         'reason' => 'required|string',
         'company' => 'nullable|string',
         'visiting' => 'nullable|string',
-        'code1000' => 'accepted'
+        // 'code1000' => 'accepted'
       ],
-      [
-        'code1000.accepted' => "Tick this box to confirm you've recieved site induction and understand code 1000"
-      ]
+      // [
+      //   'code1000.accepted' => "Tick this box to confirm you've recieved site induction and understand code 5K"
+      // ]
     );
 
     if ($request->action == 'ext') {
@@ -110,6 +112,15 @@ class VisitorController extends BaseController
             'phone',
             'Phone is invalid'
           );
+        }
+
+        if ($request->reason == 'Work') {
+          if (!$request->code1000) {
+            $validator->errors()->add(
+              'code1000',
+              "Tick this box to confirm you've recieved site induction and understand code 5K"
+            );
+          }
         }
       });
     } //end if action is ext
@@ -128,6 +139,7 @@ class VisitorController extends BaseController
 
     //Check for query error
     if ($visitorResult['error']) {
+
       $request->session()->put('respondsMsg', 'code100');
       return redirect()
         ->route($redirectPage)
@@ -146,7 +158,8 @@ class VisitorController extends BaseController
 
     //if no errors or the current visitor isn't alreadly signed in store data in db
     try {
-
+      $msg_type = "visitor_contractor";
+      $event_type = "in";
       $visitor = new Visitor();
       $visitor->fname = $request->first_name;
       $visitor->lname = $request->last_name;
@@ -161,14 +174,33 @@ class VisitorController extends BaseController
       }
       if ($request->action == 'co-worker') {
         $visitor->visitor_type = 'Co-worker';
+        $msg_type = "coworker";
       } //end if action is co-worker
       $visitor->save();
+
+      //Send email to inform host
+
+      if (count($request->host_details_arr) > 0) {
+
+        $this->sendCoworkerVisitorContractorEmail(
+          $msg_type,
+          $event_type,
+          $request->date_now,
+          $request->time_now,
+          $request->reason,
+          $request->company,
+          $request->first_name . " " . $request->last_name,
+          $request->host_details_arr
+        );
+      } // end if host array details > 0
+
+
       $request->session()->put('respondsMsg', "code200");
       return redirect()
         ->route($redirectPage);
       die();
     } catch (\Exception $e) {
-      //dd($e);
+      dd($e);
       $request->session()->put('respondsMsg', "code100");
       return redirect()
         ->route($redirectPage)
@@ -187,7 +219,7 @@ class VisitorController extends BaseController
       ]);
     } //End if error
 
-    $userResult =  User::searchUser($request->searchedword);
+    $userResult =  User::searchUser($request->searchedword, $request->user_type);
 
 
     if ($userResult["error"]) {
@@ -205,8 +237,19 @@ class VisitorController extends BaseController
   } // end searchCoworker
 
 
+  public function fetchLeadersByDepartCompId(Request $request)
+  {
+    $leaders_result = User::fetchLeadersByDepartCompId($request->depart_comp_id);
+    return response()->json([
+      'error' => "",
+      'leaders_result' => $leaders_result,
+    ]);
+  }
+
   public function handleVisitorSignout(Request $request)
   {
+
+    //dd();
     if ($request->action == null || $request->action == "") {
       return redirect()
         ->route('/');
@@ -214,12 +257,35 @@ class VisitorController extends BaseController
     } //end if action is null or empty
 
     $signedInId = 0;
+    $signInVistorFname = "";
+    $signInVistorLname = "";
+    $visitor_type = "";
+    $reason = "";
+    $company = "";
+    $date_now = "";
+    $time_now = "";
 
     if ($request->action == "alreadysignedIn") {
+
       if ($request->session()->has('visitorAlreadySignInId')) {
+        //Get session varibles
         $signedInId = $request->session()->pull('visitorAlreadySignInId', 0);
-        $request->session()->forget('visitorAlreadySignInId');
+        $signInVistorFname = $request->session()->pull('fname', '');
+        $signInVistorLname = $request->session()->pull('lname', '');
+        $visitor_type = $request->session()->pull('visitor_type', '');
+        $reason = $request->session()->pull('reason', '');
+        $company = $request->session()->pull('company', '');
+        $date_now = $request->session()->pull('date_now', '');
+        $time_now = $request->session()->pull('time_now', '');
+        //remove session varibles
+        $request->session()->forget('fname');
+        $request->session()->forget('lname');
         $request->session()->forget('visitorAlreadySignedIn');
+        $request->session()->forget('visitor_type');
+        $request->session()->forget('reason');
+        $request->session()->forget('company');
+        $request->session()->forget('date_now');
+        $request->session()->forget('time_now');
       } else {
 
         $request->session()->put('respondsMsg', "code100");
@@ -230,7 +296,14 @@ class VisitorController extends BaseController
 
     } else if ($request->action == "endSignedIn") {
 
-      $signedInId = $request->signInVistorId;
+      $signedInId = $request->signInVistor['id'];
+      $signInVistorFname = $request->signInVistor['fname'];
+      $signInVistorLname = $request->signInVistor['lname'];
+      $visitor_type = $request->signInVistor['visitor_type'];
+      $reason = $request->signInVistor['reason'];
+      $company = $request->signInVistor['company'];
+      $date_now = $request->date_now;
+      $time_now = $request->time_now;
     } else {
 
       $request->session()->put('respondsMsg', "code100");
@@ -245,6 +318,34 @@ class VisitorController extends BaseController
         //if there is an id update database;
         Visitor::where('id', $signedInId)
           ->update(['sign_out' => $request->currentDataTime]);
+        //select coworker/visitor/contract company or department id
+        $depart_comp_id = User::select('department_company')->where('fname', $signInVistorFname)->where('lname', $signInVistorLname)->first();
+        if (!is_null($depart_comp_id)) {
+          //select coworker/visitor/contract host/leaders
+          $host_leaders = User::fetchLeadersByDepartCompId($depart_comp_id->department_company);
+          if (count($host_leaders) > 0) {
+            $msg_type = "visitor_contractor";
+            $event_type = "out";
+
+            if ($visitor_type == 'Co-worker') {
+              $msg_type = "coworker";
+            } //end if action is co-worker
+
+            //Send email to host/leaders
+            $this->sendCoworkerVisitorContractorEmail(
+              $msg_type,
+              $event_type,
+              $date_now,
+              $time_now,
+              $reason,
+              $company == "Not a company" ? "" : $company,
+              $signInVistorFname . " " . $signInVistorLname,
+              $host_leaders
+            );
+          } // end count leaders
+
+          // dd($host_leaders);
+        } // end if !is_null
 
         $request->session()->put('respondsMsg', "code200");
         return redirect()
@@ -290,7 +391,83 @@ class VisitorController extends BaseController
       'error' => "",
       'visitorsSigninData' => $visitorsSigninData['visitorsSigninData']
     ]);
-  } // end findVisitorSignin
+  } //end findVisitorSignin
 
+  public function signInOutOptionIndex()
+  {
+    return Inertia::render('SignInOut');
+  } //end signInOutOptionIndex
+
+  public function fetchRegularContractorVisitor(Request $request)
+  {
+    $out_come_data = User::fetchRegularVisitorOrContractor($request->badge_id);
+    if ($out_come_data["error"]) {
+      return response()->json([
+        'error' => $this->returnGenericSystemErrMsg()
+      ]);
+    } //End if error
+
+    return response()->json([
+      'error' => "",
+      'visitor_contractor_data' => $out_come_data['visitor_contractor_res'],
+      'visitor_contractor_leader_data' => $out_come_data['visitor_contractor_leader_res']
+    ]);
+  } // end fetchRegularContractorVisitor
+
+  private function sendCoworkerVisitorContractorEmail(
+    $msg_type,
+    $event_type,
+    $date,
+    $time,
+    $reason,
+    $company,
+    $coworker_visitor_contractor_name,
+    $host_detail_arr
+  ) {
+    //check if $host_detail_arr is Object 
+    $is_host_detail_object = is_object($host_detail_arr) ? true : false;
+    //dd($is_host_detail_object);
+    foreach ($host_detail_arr as $host_detail) {
+
+      $outComeArray = array("error" => "", "outcome" => "");
+      $emailTemplate = "mail.coworker-contractor";
+      $subject_str =  $event_type == 'in' ? 'has arrived' : 'has left';
+      $subject = "Your visitor/contractor " . $subject_str;
+
+      $host_name = "";
+      $host_email = "";
+
+      if ($is_host_detail_object) {
+        $host_name = $host_detail->fname;
+        $host_email = $host_detail->email;
+      } else {
+        $host_name = $host_detail['fname'];
+        $host_email = $host_detail['email'];
+      }
+      if ($msg_type == "coworker") {
+        $subject = "Your coworker " . $subject_str;
+      } // end if msg_type
+      $dataArray = array(
+        'msg_type' => $msg_type,
+        'event_type' => $event_type,
+        'to_name' => $host_name,
+        'date' => $date,
+        'time' => $time,
+        'reason' => $reason,
+        'company' => $company,
+        'coworker_vist_contractor_name' => $coworker_visitor_contractor_name,
+      );
+      //convert data array into data object for blade view
+      $dataObj = (object)$dataArray;
+      try {
+        Mail::to($host_email)->send(new AppMail($subject, $emailTemplate, $dataObj));
+        $outComeArray["outcome"] .= " mail sent";
+      } catch (\Exception $e) {
+        //dd($e);
+        $outComeArray["error"] = $outComeArray["error"] .= " error";
+      }
+    } //end foreach loop
+    return $outComeArray;
+  } // End fetchRegularContractorVisitor
 
 }//End main class

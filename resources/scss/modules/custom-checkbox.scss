@@ -1,0 +1,49 @@
+.custom-checkbox {
+    display: inline-block;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 0.1rem solid $midGreyColor;
+    margin-top: 0.1rem;
+    margin-right: 0.4rem;
+    padding: 0 0.3rem 0.1rem 0.2rem;
+    cursor: pointer;
+    background-color: $whiteColor;
+}
+
+.custom-checkbox-text {
+    display: inline-block;
+}
+
+.custom-checkbox-check-icon {
+    color: $whiteColor;
+}
+
+.custom-checkbox-check-icon-checked {
+    color: $blackColor;
+}
+
+.checkbox_checked {
+    border-color: $blackColor;
+
+}
+
+.checkbox_error {
+    padding: 0;
+    margin: 0;
+    padding-left: 2rem;
+    margin-bottom: 0.2rem;
+
+}
+
+
+
+@media (max-width: 991.98px) {
+    .checkbox_error {
+        padding-left: 0;
+    }
+
+}
+
+@media (max-width: 767.98px) {}
+
+@media (max-width: 575.98px) {}

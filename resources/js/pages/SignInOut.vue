@@ -1,25 +1,25 @@
 <template>
-  <Layout pageTitle="home" backUrl="/sign-in-out-option">
+  <Layout pageTitle="home" backUrl="/">
     <div class="container">
       <div class="row">
         <div class="col-md-10 mx-auto">
           <div class="row">
             <div class="col text-right">
               <AppButton
-                :btnFunc="() => initiateCoWokerSignIn()"
+                :btnFunc="() => initiateSignInOption()"
                 btnStyle="success"
                 customClass="sign-in-out-btn mr-4"
               >
-                I'm IC co-worker
+                Sign In <i class="fas fa-arrow-down"></i>
               </AppButton>
             </div>
             <div class="col">
               <AppButton
-                :btnFunc="() => initiateExtVisitorSiginIn()"
-                btnStyle="primary2"
+                :btnFunc="() => initiateSignOut()"
+                btnStyle="danger"
                 customClass="sign-in-out-btn ml-4"
               >
-                I'm visitor/contractor
+                Sign Out <i class="fas fa-arrow-up"></i>
               </AppButton>
             </div>
           </div>
@@ -34,15 +34,10 @@ import { router } from "@inertiajs/vue3";
 import AppButton from "../shared/AppButton";
 import Layout from "../shared/Layout";
 
-const initiateExtVisitorSiginIn = () => {
-  router.visit("/external-visitor-signin");
+const initiateSignInOption = () => {
+  router.visit("/sign-in-option");
 };
-
-const initiateCoWokerSignIn = () => {
-  router.visit("/co-worker-signin");
+const initiateSignOut = () => {
+  router.visit("/signout");
 };
-
-// const initiateSupportOffice = () => {
-//   router.visit("/service-office-signin");
-// };
 </script>

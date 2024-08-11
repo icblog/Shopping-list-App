@@ -1,5 +1,5 @@
 <template>
-  <Layout pageTitle="signout" backUrl="/">
+  <Layout pageTitle="signout" backUrl="/sign-in-out-option">
     <div class="container">
       <div class="row">
         <div class="col-md-10 mx-auto">
@@ -43,7 +43,7 @@
                         <label class="form-label" for="signoutoption"
                           >{{ signOutData.label }}*
                           <img
-                            v-show="signOutData.label == 'Enter badge letter'"
+                            v-show="signOutData.label == 'Enter badge id'"
                             class="badge-img"
                             src="/imgs/badge.jpg"
                             alt="badge"
@@ -96,7 +96,7 @@
                         <div class="col text-right">
                           <AppButton
                             customClass="primary-btn"
-                            :btnFunc="() => handleSignOutVistorBtnClick(visitor.id)"
+                            :btnFunc="() => handleSignOutVistorBtnClick(visitor)"
                           >
                             Sign Out
                           </AppButton>
@@ -134,7 +134,13 @@ import { reactive, ref, onMounted, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { debounce } from "lodash";
 import axios from "../api/axios";
-import { focusOnFirstInput, returnSystemErrorMsg, toSqlDatetime} from "../helper/util";
+import {
+  focusOnFirstInput,
+  returnSystemErrorMsg,
+  toSqlDatetime,
+  returnCurrentTime,
+  returnCurrentDate,
+} from "../helper/util";
 import Layout from "../shared/Layout";
 import AppButton from "../shared/AppButton";
 import LoadingIndicator from "../shared/LoadingIndicator.vue";
@@ -157,8 +163,11 @@ const signOutData = reactive({
   actionData: {
     action: "alreadysignedIn",
     currentDataTime: toSqlDatetime(new Date()),
+    signInVistor: [],
+    date_now: returnCurrentDate(),
+    time_now: returnCurrentTime(),
   },
-  label: "Enter badge letter",
+  label: "Enter badge id",
   isSearchComplete: false,
   isSearching: false,
   customErr: "",
@@ -167,7 +176,7 @@ const signOutData = reactive({
 });
 
 const handleVisitorAlreadySignedIn = () => {
-  if (signOutData.visitorAlreadySignedIn == true) {
+  if (signOutData.visitorAlreadySignedIn) {
     processing.value = true;
 
     setTimeout(() => {
@@ -189,22 +198,22 @@ const handleVisitorAlreadySignedIn = () => {
     }, 500);
   }
 };
-const handleSignOutVistorBtnClick = (signInVistorId) => {
+const handleSignOutVistorBtnClick = (visitor) => {
   signOutData.actionData.action = "endSignedIn";
-  signOutData.actionData.signInVistorId = signInVistorId;
+  signOutData.actionData.signInVistor = visitor;
   signOutData.visitorAlreadySignedIn = true;
   //Call above function
   handleVisitorAlreadySignedIn();
 };
 
 const returnCanNotFindVistorErrorMsg = () => {
-  let lnameOrBadge = "badge";
+  let nameOrBadge = "badge id";
   if (signOutData.label.indexOf("badge") > 0) {
-    lnameOrBadge = "last name";
+    nameOrBadge = "first or last name";
   }
   return (
     "Sorry we can not find you, please click on change option and try using your <strong>" +
-    lnameOrBadge +
+    nameOrBadge +
     "</strong> or see a member of the security team thank you."
   );
 };
@@ -216,12 +225,12 @@ const changeSignOutOption = () => {
     searchvalue.value = "";
   }
   //Change the label
-  if (signOutData.signOutForm.signoutoption == "lastname") {
-    signOutData.label = "Enter badge letter";
+  if (signOutData.signOutForm.signoutoption == "name") {
+    signOutData.label = "Enter badge id";
     signOutData.signOutForm.signoutoption = "badge";
   } else if (signOutData.signOutForm.signoutoption == "badge") {
-    signOutData.label = "Enter your last name";
-    signOutData.signOutForm.signoutoption = "lastname";
+    signOutData.label = "Enter your first or last name";
+    signOutData.signOutForm.signoutoption = "name";
   }
 };
 
