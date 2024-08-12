@@ -75,6 +75,7 @@ class VisitorController extends BaseController
 
   public function store(Request $request)
   {
+
     //Check if myhouse the hidden recaptcha input is filled in,
     //if that is the case redirect to home page.
 
@@ -160,12 +161,31 @@ class VisitorController extends BaseController
     try {
       $msg_type = "visitor_contractor";
       $event_type = "in";
+      $host_ids = "";
+      //check if $host_detail_arr is Object 
+      $is_host_detail_object = is_object($request->host_details_arr) ? true : false;
+      //Count $request->host_details_arr 
+      $host_details_arr_count  = count($request->host_details_arr);
+      if ($host_details_arr_count > 0) {
+        $i = 1;
+        foreach ($request->host_details_arr as $host_detail) {
+          if ($is_host_detail_object) {
+            $host_ids = $i < $host_details_arr_count ? $host_detail->id . "," : $host_detail->id;
+          } else {
+
+            $host_ids .= $i < $host_details_arr_count ? $host_detail['id'] . "," : $host_detail['id'];
+          }
+          $i++;
+        } //End foreach loop
+      } //end if host_details_arr_count > 0
+      //dd($host_ids);
       $visitor = new Visitor();
       $visitor->fname = $request->first_name;
       $visitor->lname = $request->last_name;
       $visitor->phone = $request->phone;
       $visitor->badge = $request->badge;
       $visitor->reason = $request->reason;
+      $visitor->host_ids = $host_ids;
       if ($request->company != "") {
         $visitor->company = $request->company;
       }
@@ -180,7 +200,7 @@ class VisitorController extends BaseController
 
       //Send email to inform host
 
-      if (count($request->host_details_arr) > 0) {
+      if ($host_details_arr_count > 0) {
 
         $this->sendCoworkerVisitorContractorEmail(
           $msg_type,
@@ -200,7 +220,7 @@ class VisitorController extends BaseController
         ->route($redirectPage);
       die();
     } catch (\Exception $e) {
-      dd($e);
+      //dd($e);
       $request->session()->put('respondsMsg', "code100");
       return redirect()
         ->route($redirectPage)
@@ -249,7 +269,8 @@ class VisitorController extends BaseController
   public function handleVisitorSignout(Request $request)
   {
 
-    //dd();
+    // dd($request->signInVistor);
+
     if ($request->action == null || $request->action == "") {
       return redirect()
         ->route('/');
@@ -264,6 +285,7 @@ class VisitorController extends BaseController
     $company = "";
     $date_now = "";
     $time_now = "";
+    $host_ids = "";
 
     if ($request->action == "alreadysignedIn") {
 
@@ -277,6 +299,7 @@ class VisitorController extends BaseController
         $company = $request->session()->pull('company', '');
         $date_now = $request->session()->pull('date_now', '');
         $time_now = $request->session()->pull('time_now', '');
+        $host_ids = $request->session()->pull('host_ids', '');
         //remove session varibles
         $request->session()->forget('fname');
         $request->session()->forget('lname');
@@ -286,6 +309,7 @@ class VisitorController extends BaseController
         $request->session()->forget('company');
         $request->session()->forget('date_now');
         $request->session()->forget('time_now');
+        $request->session()->forget('host_ids');
       } else {
 
         $request->session()->put('respondsMsg', "code100");
@@ -304,6 +328,7 @@ class VisitorController extends BaseController
       $company = $request->signInVistor['company'];
       $date_now = $request->date_now;
       $time_now = $request->time_now;
+      $host_ids = $request->signInVistor['host_ids'];
     } else {
 
       $request->session()->put('respondsMsg', "code100");
@@ -318,34 +343,40 @@ class VisitorController extends BaseController
         //if there is an id update database;
         Visitor::where('id', $signedInId)
           ->update(['sign_out' => $request->currentDataTime]);
-        //select coworker/visitor/contract company or department id
-        $depart_comp_id = User::select('department_company')->where('fname', $signInVistorFname)->where('lname', $signInVistorLname)->first();
-        if (!is_null($depart_comp_id)) {
-          //select coworker/visitor/contract host/leaders
-          $host_leaders = User::fetchLeadersByDepartCompId($depart_comp_id->department_company);
-          if (count($host_leaders) > 0) {
-            $msg_type = "visitor_contractor";
-            $event_type = "out";
+        //Turn host ids into array
+        $host_ids = explode(',', $host_ids);
+        $host_leaders = array();
+        $host = null;
 
-            if ($visitor_type == 'Co-worker') {
-              $msg_type = "coworker";
-            } //end if action is co-worker
+        foreach ($host_ids as $host_id) {
+          $host = User::select('fname', 'email')->where('id', $host_id)->first();
+          if (!is_null($host)) {
+            array_push($host_leaders, $host);
+          }
+        } // end foreach
+        //dd($host_leaders[0]->fname);
 
-            //Send email to host/leaders
-            $this->sendCoworkerVisitorContractorEmail(
-              $msg_type,
-              $event_type,
-              $date_now,
-              $time_now,
-              $reason,
-              $company == "Not a company" ? "" : $company,
-              $signInVistorFname . " " . $signInVistorLname,
-              $host_leaders
-            );
-          } // end count leaders
+        if (count($host_leaders) > 0) {
+          $msg_type = "visitor_contractor";
+          $event_type = "out";
 
-          // dd($host_leaders);
-        } // end if !is_null
+          if ($visitor_type == 'Co-worker') {
+            $msg_type = "coworker";
+          } //end if action is co-worker
+
+          //Send email to host/leaders
+          $this->sendCoworkerVisitorContractorEmail(
+            $msg_type,
+            $event_type,
+            $date_now,
+            $time_now,
+            $reason,
+            $company == "Not a company" ? "" : $company,
+            $signInVistorFname . " " . $signInVistorLname,
+            $host_leaders
+          );
+        } // end count leaders
+
 
         $request->session()->put('respondsMsg', "code200");
         return redirect()

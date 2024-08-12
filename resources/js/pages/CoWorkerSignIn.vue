@@ -363,6 +363,7 @@ const updateSelectedHost = (selectedCoworker) => {
     selectedCoworker.fname,
     selectedCoworker.lname
   );
+  coworkerSignInData.signInForm.host_details_arr = [selectedCoworker];
 };
 
 const changeCoworker = () => {

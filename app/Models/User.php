@@ -47,7 +47,7 @@ class User extends Authenticatable
 
       $res = DB::table('users')
 
-        ->select('users.fname', 'users.lname', 'users.phone', 'users.email', 'department_and_companies.name AS department_name', 'department_and_companies.is_depart_or_comp AS is_depart_or_comp', 'department_and_companies.id AS depart_or_comp_id')
+        ->select('users.id', 'users.fname', 'users.lname', 'users.phone', 'users.email', 'department_and_companies.name AS department_name', 'department_and_companies.is_depart_or_comp AS is_depart_or_comp', 'department_and_companies.id AS depart_or_comp_id')
         ->join('department_and_companies', 'department_and_companies.id', '=', 'users.department_company')
         ->where([
           ['users.fname', 'LIKE', "%{$searchedWord}%"]
@@ -119,7 +119,7 @@ class User extends Authenticatable
 
     try {
       $visitor_contractor_leader_res = DB::table('users')
-        ->select('users.fname', 'users.lname', 'users.email')
+        ->select('users.id', 'users.fname', 'users.lname', 'users.email')
         ->where('users.department_company', $depart_comp_id)
         ->where('users.is_leader', 1)
         ->get();

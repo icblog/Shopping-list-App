@@ -25,7 +25,7 @@ class Visitor extends Model
 
     try {
       $outComeResult = DB::table('visitors')
-        ->select('id', 'sign_in', 'visitor_type', 'reason', 'company')
+        ->select('id', 'sign_in', 'visitor_type', 'reason', 'company', 'host_ids')
         ->where('fname', $request->first_name)
         ->where('lname', $request->last_name)
         ->whereNull('sign_out')
@@ -40,11 +40,11 @@ class Visitor extends Model
         $request->session()->put('visitor_type', $outComeResult->visitor_type);
         $request->session()->put('reason', $outComeResult->reason);
         $request->session()->put('company', $outComeResult->company);
+        $request->session()->put('host_ids', $outComeResult->host_ids);
         $request->session()->put('fname', $request->first_name);
         $request->session()->put('lname', $request->last_name);
         $request->session()->put('date_now', $request->date_now);
         $request->session()->put('time_now', $request->time_now);
-
         $request->session()->put('visitorAlreadySignedIn', true);
       }
 
@@ -63,7 +63,7 @@ class Visitor extends Model
     try {
       $query = DB::table('visitors')
 
-        ->select('id', 'fname', 'lname', 'visitor_type', 'reason', 'company');
+        ->select('id', 'fname', 'lname', 'visitor_type', 'reason', 'company', 'host_ids');
 
       if ($signOutOption == 'badge') {
 

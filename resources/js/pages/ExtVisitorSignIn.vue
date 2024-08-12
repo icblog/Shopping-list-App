@@ -517,6 +517,7 @@ const changeBadge = () => {
 
 const updateUserSelected = (coWorker) => {
   signInData.signInForm.visiting = returnCoWorkerFullName(coWorker.fname, coWorker.lname);
+  signInData.signInForm.host_details_arr = [coWorker];
 };
 
 const changeVisitor = () => {
@@ -721,7 +722,6 @@ const fetchRegualarContractorOrVisitor = async (badge_id) => {
 };
 
 const assignVisitorContractorDetails = (visitor_contractor_data, host_details_arr) => {
-  signInData.signInForm.host_details_arr = host_details_arr;
   // console.log(visitor_contractor_data);
   if (visitor_contractor_data != null) {
     signInData.signInForm.first_name = visitor_contractor_data.fname;
@@ -733,7 +733,11 @@ const assignVisitorContractorDetails = (visitor_contractor_data, host_details_ar
   }
 
   if (host_details_arr.length > 0) {
-    updateUserSelected(host_details_arr[0]);
+    signInData.signInForm.visiting = returnCoWorkerFullName(
+      host_details_arr[0].fname,
+      host_details_arr[0].lname
+    );
+    signInData.signInForm.host_details_arr = host_details_arr;
   }
 };
 
