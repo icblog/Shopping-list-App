@@ -11,25 +11,13 @@
 	font-family: $hfontFamily;
 	padding: 0;
 	margin: 0;
-	font-size: 1.6rem;
-	text-transform: lowercase;
-	color: $blackColor !important;
+	font-size: 1.2rem;
+    color: $blackColor !important;
 
 	&:hover {
 		text-decoration: none;
 	}
 }
-
-.logo-wrapper .logo-dot {
-	font-weight: bolder;
-	color: $primaryColor !important;
-	font-size: 5rem;
-	position: absolute;
-	left: 4.4rem;
-	top: -4.1rem;
-}
-
-
 
 @media (max-width: 1280px) {}
 

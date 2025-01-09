@@ -11,8 +11,8 @@
   <Footer />
 </template>
 <script>
-//appDataObj.appName variable comes from views/app.blade.php
-const appName = "iv";
+//appDataObj.appName variable comes from views/app.blade.php and it's from .env file
+const appName = appDataObj.appName;
 </script>
 <script setup>
 import Header from "./Header";
