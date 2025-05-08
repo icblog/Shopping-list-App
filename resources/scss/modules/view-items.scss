@@ -1,0 +1,16 @@
+.view-items-data-detail-wrapper{
+    border: 0.1rem solid $midGreyColor;
+    margin-bottom: 1rem;
+    padding: 0.6rem;
+    background-color: $lightGreyColor;
+}
+.view-items-data-detail-wrapper-active{
+    background-color: $whiteColor !important; 
+}
+
+.view-items-data-detail-wrapper .item-img{
+    max-width: 80px;
+    max-height: 80px;
+    margin: 0;
+
+}

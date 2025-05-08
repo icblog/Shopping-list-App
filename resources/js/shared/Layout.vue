@@ -4,7 +4,7 @@
       {{ appName + " | " + pageTitle }}
     </title>
   </Head>
-  <Header :backUrl="backUrl" />
+  <Header :linkUrl="linkUrl" :linkName="linkName" />
   <div class="content-wrapper">
     <slot />
   </div>
@@ -25,9 +25,13 @@ defineProps({
     default: "",
   },
 
-  backUrl: {
+  linkUrl: {
     type: String,
-    default: "",
+    default: "/add-items",
+  },
+  linkName: {
+    type: String,
+    default: "Add items to system",
   },
 });
 </script>

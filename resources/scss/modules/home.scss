@@ -1,0 +1,31 @@
+.data-detail-wrapper{
+    background-color: $lightGreyColor;
+    padding: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+
+.data-detail-wrapper .data-input {
+    background-color: $whiteColor;
+    border-color: $darkGreyColor !important;
+    cursor: pointer;
+    padding-left: .4rem !important;
+    text-align: left !important;
+  }
+  .link-wrapper a{
+    color: $darkGreyColor;
+    &:hover{
+      text-decoration: none;
+      color: $blackColor;
+    }
+  }
+  
+@media (max-width: 1280px) {}
+
+@media (max-width: 991.98px) {
+
+}
+
+@media (max-width: 767.98px) {}
+
+@media (max-width: 575.98px) {}

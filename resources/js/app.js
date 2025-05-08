@@ -13,7 +13,6 @@ import { createInertiaApp } from "@inertiajs/vue3";
 
 // });
 
-
 createInertiaApp({
     resolve: (name) => require(`./pages/${name}.vue`),
     setup({ el, App, props, plugin }) {

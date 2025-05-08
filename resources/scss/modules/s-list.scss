@@ -1,0 +1,71 @@
+
+.list-item-search-wrapper{
+   position: relative;
+   background-color: $lightGreyColor;
+   margin-bottom: 1rem;
+   padding: 1rem;
+}
+
+.list-item-search-result{
+    width: 100%;
+    left: 0;
+    z-index: 5;
+    min-height: 200px;
+    padding: 0.4rem;
+    position: absolute;
+    background-color: $lightGreyColor;
+}
+.list-item-detail-wrapper{
+ background-color: $whiteColor;
+ margin-left: 0.8rem;
+ margin-right: 0.8rem;
+ margin-top: 0.6rem;
+}
+.list-item-detail-wrapper img{
+    max-width: 70px;
+    max-height: 70px;
+    margin: 0;
+}
+.list-item-search-wrapper .clear-search-icon-times{
+    position: absolute;
+    cursor: pointer;
+    padding-left: 0.5rem;
+    right: 1.8rem;
+    top: 1.2rem;
+    border-left: 0.1rem solid $midGreyColor;
+}
+
+.list-item-search-wrapper .item-search-imput{
+   padding-right: 3rem;
+
+}
+
+.s-list-detail-wrapper{
+    background-color: $lightestGreyColor;
+    border: 0.1rem solid $blackColor;
+    color: $blackColor;
+}
+
+.s-list-detail-wrapper-active{
+    background-color: #e8f8ec;
+    border-color: #e8f8ec;
+    color: $baseColor;
+}
+
+.s-list-item-img{
+    height: 65px;
+    width: 65px;
+    cursor: pointer;
+}
+.s-list-detail-wrapper .item-name{
+    cursor: pointer;
+    
+}
+
+.search-res-qty-input{
+    margin: 0.2rem;
+    padding: 0.2rem;
+}
+.grouped-storage-name{
+    color: $primaryColorDark !important;
+}

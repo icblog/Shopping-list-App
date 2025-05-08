@@ -7,6 +7,11 @@ namespace App\Http\Controllers;
 class BaseController extends Controller
 {
 
+  public function returnResultPerPageNumber()
+  {
+    return 60;
+  }
+
   public function replaceFirstOccuranceOfChar($search, $replace, $subject)
   {
 
@@ -19,7 +24,7 @@ class BaseController extends Controller
 
   public function returnGenericSystemErrMsg()
   {
-    return "Sorry system error, your request can not be processed please contact a team leader or a manager thank you";
+    return "Sorry system error, your request can not be processed please try again later thank you.";
   } //End returnGenericSystemErrMsg
 
   public function checkIsEmail($email)
@@ -103,11 +108,5 @@ class BaseController extends Controller
     } else {
       return date("D, d M Y", strtotime($datetime));
     }
-  }
-  public function validatePhone($phoneNumber)
-  {
-    $res = preg_match('/^(((\+44)? ?(\(0\))? ?)|(0))( ?[0-9]{3,4}){3}$/', $phoneNumber);
-    // dd($res);
-    return $res;
   }
 }//End class
